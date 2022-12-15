@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+
+  mysql-server:
+    container_name: mysql_db
+    image: mysql:8.0.28
+    ports:
+      - "6000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+      MYSQL_DATABASE: bankingservice

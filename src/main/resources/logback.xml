@@ -1,0 +1,62 @@
+<configuration>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+  <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <destination>localhost:5000</destination>
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <mdc/>
+        <context/>
+        <logLevel/>
+        <loggerName/>
+        <pattern>
+          <pattern>
+            {
+            "app": "banking-service"
+            }
+          </pattern>
+        </pattern>
+        <threadName/>
+        <message/>
+        <logstashMarkers/>
+        <stackTrace/>
+      </providers>
+      <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">
+        <valueMasker class="com.example.demo.logging.logging.SensitiveValueMasker">
+          <maskPattern>\"email\"\s*:\s*\"(.*?)\"</maskPattern>
+          <maskPattern>\"accountNumber\"\s*:\s*\"(.*?)\"</maskPattern>
+          <maskPattern>email\s*=\s*(.*?)</maskPattern>
+        </valueMasker>
+      </jsonGeneratorDecorator>
+    </encoder>
+  </appender>
+
+      <appender name="CONSOLE"
+                class="ch.qos.logback.core.ConsoleAppender">
+          <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+              <layout class="com.example.demo.logging.logging.MaskingPatternLayout">
+                  <maskPattern>\"email\"\s*:\s*\"(.*?)\"</maskPattern>
+                  <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+              </layout>
+          </encoder>
+      </appender>
+
+<!--  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--    <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+<!--      <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">-->
+<!--        <valueMasker class="com.example.demo.logging.logging.SensitiveValueMasker">-->
+<!--          <maskPattern>\"email\"\s*:\s*\"(.*?)\"</maskPattern>-->
+<!--          <maskPattern>\"accountNumber\"\s*:\s*\"(.*?)\"</maskPattern>-->
+<!--          <maskPattern>email\s*=\s*(.*?)</maskPattern>-->
+<!--        </valueMasker>-->
+<!--      </jsonGeneratorDecorator>-->
+<!--    </encoder>-->
+<!--  </appender>-->
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="logstash"/>
+  </root>
+</configuration>
